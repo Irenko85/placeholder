@@ -1,0 +1,36 @@
+[remap]
+
+importer="texture"
+type="CompressedTexture2D"
+uid="uid://yovegjeju0x5"
+path.s3tc="res://.godot/imported/spellbook_closed-d21887f83730bc52b4b7c751ec5ba957_mage_texture.png-470059685fa4db3ae668bb1bf06cf2f5.s3tc.ctex"
+metadata={
+"imported_formats": ["s3tc_bptc"],
+"vram_texture": true
+}
+generator_parameters={}
+
+[deps]
+
+source_file="res://assets/KayKit_Adventurers_1.0_FREE/Assets/fbx/spellbook_closed-d21887f83730bc52b4b7c751ec5ba957_mage_texture.png"
+dest_files=["res://.godot/imported/spellbook_closed-d21887f83730bc52b4b7c751ec5ba957_mage_texture.png-470059685fa4db3ae668bb1bf06cf2f5.s3tc.ctex"]
+
+[params]
+
+compress/mode=2
+compress/high_quality=false
+compress/lossy_quality=0.7
+compress/hdr_compression=1
+compress/normal_map=0
+compress/channel_pack=0
+mipmaps/generate=true
+mipmaps/limit=-1
+roughness/mode=0
+roughness/src_normal=""
+process/fix_alpha_border=true
+process/premult_alpha=false
+process/normal_map_invert_y=false
+process/hdr_as_srgb=false
+process/hdr_clamp_exposure=false
+process/size_limit=0
+detect_3d/compress_to=0
