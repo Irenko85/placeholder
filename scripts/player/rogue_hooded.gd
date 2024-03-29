@@ -1,12 +1,17 @@
 extends CharacterBody3D
 
 
-const SPEED = 5.0
-const JUMP_VELOCITY = 4.5
+@export var speed: float = 5.0
+@export var jump_velocity: float = 10.0
+
+var jumping: bool = false
+var was_on_floor: bool = true
 
 # Get the gravity from the project settings to be synced with RigidBody nodes.
 var gravity: float = ProjectSettings.get_setting("physics/3d/default_gravity")
-@onready var spring_arm_pivot = $SpringArmPivot
+@onready var spring_arm_pivot: Node3D = $SpringArmPivot
+@onready var animation_tree: AnimationTree = $AnimationTree
+
 @export var sensitivity: float = 0.3
 
 func _ready() -> void:
@@ -25,17 +30,34 @@ func _physics_process(delta: float) -> void:
 	if not is_on_floor():
 		velocity.y -= gravity * delta
 	# Handle jump.
-	if Input.is_action_just_pressed("ui_accept") and is_on_floor():
-		velocity.y = JUMP_VELOCITY
 	# Get the input direction and handle the movement/deceleration.
 	# As good practice, you should replace UI actions with custom gameplay actions.
 	var input_dir := Input.get_vector("move_left", "move_right", "move_forward", "move_backwards")
 	var direction := (transform.basis * Vector3(input_dir.x, 0, input_dir.y)).normalized()
 	if direction:
-		velocity.x = direction.x * SPEED
-		velocity.z = direction.z * SPEED
+		velocity.x = direction.x * speed
+		velocity.z = direction.z * speed
 	else:
-		velocity.x = move_toward(velocity.x, 0, SPEED)
-		velocity.z = move_toward(velocity.z, 0, SPEED)
+		velocity.x = move_toward(velocity.x, 0, speed)
+		velocity.z = move_toward(velocity.z, 0, speed)
+		
+	movement(delta)
 
 	move_and_slide()
+
+func movement(delta) -> void:
+	if Input.is_action_just_pressed("ui_accept") and is_on_floor():
+		velocity.y = jump_velocity
+		jumping = true
+		animation_tree.set("parameters/conditions/jumping", true)
+		animation_tree.set("parameters/conditions/grounded", false)
+	if is_on_floor() and not was_on_floor:
+		jumping = false
+		animation_tree.set("parameters/conditions/jumping", false)
+		animation_tree.set("parameters/conditions/grounded", true)
+	if not is_on_floor() and not jumping:
+		animation_tree.get("parameters/playback").travel("Jump_Idle")
+		animation_tree.set("parameters/conditions/grounded", false)
+	was_on_floor = is_on_floor()
+		
+		
