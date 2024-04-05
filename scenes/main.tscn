@@ -1,6 +1,7 @@
-[gd_scene load_steps=7 format=3 uid="uid://b5hufqs7sbm01"]
+[gd_scene load_steps=8 format=3 uid="uid://b5hufqs7sbm01"]
 
 [ext_resource type="Script" path="res://scenes/main.gd" id="1_ysfbh"]
+[ext_resource type="PackedScene" uid="uid://c7n3cme17dp68" path="res://scenes/players/rogue_hooded.tscn" id="2_k2pmo"]
 
 [sub_resource type="ProceduralSkyMaterial" id="ProceduralSkyMaterial_38rlk"]
 sky_horizon_color = Color(0.64625, 0.65575, 0.67075, 1)
@@ -38,3 +39,5 @@ mesh = SubResource("PlaneMesh_33dbc")
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="Ground/StaticBody3D"]
 shape = SubResource("ConcavePolygonShape3D_2exbv")
+
+[node name="Rogue_Hooded" parent="." instance=ExtResource("2_k2pmo")]
