@@ -1,7 +1,7 @@
 [gd_scene load_steps=8 format=3 uid="uid://b5hufqs7sbm01"]
 
 [ext_resource type="Script" path="res://scenes/main.gd" id="1_ysfbh"]
-[ext_resource type="PackedScene" uid="uid://c7n3cme17dp68" path="res://scenes/players/rogue_hooded.tscn" id="2_k2pmo"]
+[ext_resource type="PackedScene" uid="uid://c7n3cme17dp68" path="res://scenes/players/rogue_hooded/rogue_hooded.tscn" id="2_k2pmo"]
 
 [sub_resource type="ProceduralSkyMaterial" id="ProceduralSkyMaterial_38rlk"]
 sky_horizon_color = Color(0.64625, 0.65575, 0.67075, 1)

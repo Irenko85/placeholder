@@ -20,6 +20,10 @@ config/icon="res://icon.svg"
 Debug="*res://scripts/debug.gd"
 Game="*res://scenes/game.tscn"
 
+[dotnet]
+
+project/assembly_name="multiplayer_example"
+
 [filesystem]
 
 import/fbx/enabled=false
