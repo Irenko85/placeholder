@@ -1,7 +1,7 @@
 [gd_scene load_steps=112 format=3 uid="uid://c7n3cme17dp68"]
 
-[ext_resource type="PackedScene" uid="uid://d121rq7w18k4d" path="res://scenes/players/rogue_hooded/Rogue_Hooded.glb" id="1_c6yy3"]
-[ext_resource type="Script" path="res://scenes/players/rogue_hooded/rogue_hooded.gd" id="2_mgt8w"]
+[ext_resource type="PackedScene" uid="uid://d121rq7w18k4d" path="res://game/players/rogue_hooded/Rogue_Hooded.glb" id="1_c6yy3"]
+[ext_resource type="Script" path="res://game/players/rogue_hooded/rogue_hooded.gd" id="2_mgt8w"]
 
 [sub_resource type="Animation" id="Animation_ubr7e"]
 resource_name = "1H_Melee_Attack_Chop"

@@ -11,14 +11,14 @@ config_version=5
 [application]
 
 config/name="placeholder"
-run/main_scene="res://scenes/lobby.tscn"
+run/main_scene="res://game/lobby.tscn"
 config/features=PackedStringArray("4.2", "Forward Plus")
 config/icon="res://icon.svg"
 
 [autoload]
 
 Debug="*res://scripts/debug.gd"
-Game="*res://scenes/game.tscn"
+Game="*res://game/game.tscn"
 
 [dotnet]
 

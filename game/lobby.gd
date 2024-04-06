@@ -39,7 +39,7 @@ var _menu_stack: Array[Control] = []
 func _ready():
 	
 	if Game.multiplayer_test:
-		get_tree().change_scene_to_file("res://scenes/lobby_test.tscn")
+		get_tree().change_scene_to_file("res://game/lobby_test.tscn")
 		return
 	
 	multiplayer.connected_to_server.connect(_on_connected_to_server)
@@ -220,7 +220,7 @@ func starting_game(value: bool):
 
 @rpc("any_peer", "call_local", "reliable")
 func start_game() -> void:
-	get_tree().change_scene_to_file("res://scenes/main.tscn")
+	get_tree().change_scene_to_file("res://game/main.tscn")
 
 
 func _disconnect():
