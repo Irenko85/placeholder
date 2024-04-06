@@ -67,7 +67,7 @@ func _ready():
 	user.text = OS.get_environment("USERNAME") + (str(randi() % 1000) if Engine.is_editor_hint()
  else "")
 	
-	Game.upnp_completed.connect(_on_upnp_completed)
+	Game.upnp_completed.connect(_on_upnp_completed, 1)
 
 
 func _process(_delta: float) -> void:
