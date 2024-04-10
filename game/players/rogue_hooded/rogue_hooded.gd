@@ -4,22 +4,27 @@ extends CharacterBody3D
 @export var jump_velocity: float = 10.0
 @export var LERP_VALUE: float = 0.15
 @export var acceleration: float = 4.0
+@export var sensitivity: float = 0.3
 
-var jumping: bool = false
-var was_on_floor: bool = true
+@export var player_shield: PackedScene
 
 # Get the gravity from the project settings to be synced with RigidBody nodes.
 var gravity: float = ProjectSettings.get_setting("physics/3d/default_gravity")
+var jumping: bool = false
+var can_move: bool = true
+var was_on_floor: bool = true
+var is_attacking: bool = false
 
 @onready var spring_arm_pivot: Node3D = $SpringArmPivot
 @onready var spring_arm_3d: SpringArm3D = $SpringArmPivot/SpringArm3D
 @onready var rig: Node3D = $Rig
 @onready var animation_tree: AnimationTree = $AnimationTree
+@onready var shield_spawner: Node3D = %ShieldSpawner
 
-@export var sensitivity: float = 0.3
 
 func _ready() -> void:
 	Input.mouse_mode = Input.MOUSE_MODE_CAPTURED 
+
 
 func _input(event: InputEvent) -> void:
 	if event.is_action_pressed("quit"):
@@ -29,16 +34,47 @@ func _input(event: InputEvent) -> void:
 		spring_arm_3d.rotate_x(deg_to_rad(-event.relative.y * sensitivity))
 		spring_arm_3d.rotation.x = clamp(spring_arm_3d.rotation.x, -PI/4, PI/4)
 
+
 func _physics_process(delta: float) -> void:
-	movement(delta)
+	apply_gravity(delta)
 	handle_animations()
+	
+	if can_move:
+		movement(delta)
+	else:
+		velocity.x = lerp(velocity.x, 0.0, acceleration * delta)
+		velocity.z = lerp(velocity.z, 0.0, acceleration * delta)
+	
+	# Can't block on air
+	if Input.is_action_just_pressed("block") and is_on_floor():
+		can_move = false
+		block()
+	
 	move_and_slide()
 
-func movement(delta) -> void:
+
+func apply_gravity(delta):
 	# Add the gravity.
 	if not is_on_floor():
 		velocity.y -= gravity * delta
 
+
+func block() -> void:
+	is_attacking = true
+	animation_tree.get("parameters/playback").travel("Block")
+	var shield_instance = player_shield.instantiate()
+	shield_instance.global_rotation.y = rad_to_deg(PI/2)
+	shield_spawner.add_child(shield_instance)
+	shield_instance.global_position = shield_spawner.global_position
+	shield_instance.appear()
+	# Await to the block animation to finish
+	await get_tree().create_timer(1.0667).timeout
+	shield_instance.disappear()
+	can_move = true
+	is_attacking = false
+
+
+func movement(delta) -> void:
 	if is_multiplayer_authority():
 		var vy = velocity.y
 		velocity.y = 0
@@ -48,9 +84,10 @@ func movement(delta) -> void:
 		velocity = lerp(velocity, direction * speed, acceleration * delta)
 		velocity.y = vy
 		send_data.rpc(global_position, velocity, rig.rotation)
-		
+
+
 func handle_animations() -> void:
-	if Input.is_action_just_pressed("ui_accept") and is_on_floor():
+	if Input.is_action_just_pressed("ui_accept") and is_on_floor() and not is_attacking:
 		velocity.y = jump_velocity
 		jumping = true
 		animation_tree.set("parameters/conditions/jumping", true)
