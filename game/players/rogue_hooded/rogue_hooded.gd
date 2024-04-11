@@ -39,13 +39,15 @@ func movement(delta) -> void:
 	if not is_on_floor():
 		velocity.y -= gravity * delta
 
-	var vy = velocity.y
-	velocity.y = 0
-	var input = Input.get_vector("move_left", "move_right", "move_forward", "move_backwards")
-	var direction = Vector3(input.x, 0, input.y).rotated(Vector3.UP, spring_arm_pivot.rotation.y)
-	rig.rotation.y = lerp_angle(rig.rotation.y, atan2(-velocity.x, -velocity.z), LERP_VALUE)
-	velocity = lerp(velocity, direction * speed, acceleration * delta)
-	velocity.y = vy
+	if is_multiplayer_authority():
+		var vy = velocity.y
+		velocity.y = 0
+		var input = Input.get_vector("move_left", "move_right", "move_forward", "move_backwards")
+		var direction = Vector3(input.x, 0, input.y).rotated(Vector3.UP, spring_arm_pivot.rotation.y)
+		rig.rotation.y = lerp_angle(rig.rotation.y, atan2(-velocity.x, -velocity.z), LERP_VALUE)
+		velocity = lerp(velocity, direction * speed, acceleration * delta)
+		velocity.y = vy
+		send_data.rpc(global_position, velocity, rig.rotation)
 		
 func handle_animations() -> void:
 	if Input.is_action_just_pressed("ui_accept") and is_on_floor():
@@ -71,4 +73,10 @@ func handle_animations() -> void:
 func setup(player_data: Statics.PlayerData) -> void:
 	name = str(player_data.id)
 	set_multiplayer_authority(player_data.id)
+
+@rpc
+func send_data(pos: Vector3, vel: Vector3, rotation):
+	global_position = lerp(global_position, pos, 0.75)
+	velocity = lerp(velocity, vel, 0.75)
+	rig.rotation = lerp(rig.rotation, rotation, 0.75)
 	
