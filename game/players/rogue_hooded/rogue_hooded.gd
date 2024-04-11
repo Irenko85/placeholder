@@ -67,3 +67,8 @@ func handle_animations() -> void:
 	animation_tree.set("parameters/Movement/blend_position", Vector2(vl.x, -vl.z) / speed)
 		
 	was_on_floor = is_on_floor()
+
+func setup(player_data: Statics.PlayerData) -> void:
+	name = str(player_data.id)
+	set_multiplayer_authority(player_data.id)
+	
