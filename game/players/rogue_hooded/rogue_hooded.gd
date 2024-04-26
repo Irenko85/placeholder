@@ -1,4 +1,5 @@
 extends CharacterBody3D
+class_name Player
 
 @export var speed: float = 5.0
 @export var jump_velocity: float = 10.0
@@ -20,6 +21,7 @@ var is_attacking: bool = false
 @onready var rig: Node3D = $Rig
 @onready var animation_tree: AnimationTree = $AnimationTree
 @onready var shield_spawner: Node3D = %ShieldSpawner
+@onready var camera_3d: Camera3D = $SpringArmPivot/SpringArm3D/Camera3D
 
 
 func _ready() -> void:
@@ -46,9 +48,8 @@ func _physics_process(delta: float) -> void:
 		velocity.z = lerp(velocity.z, 0.0, acceleration * delta)
 	
 	# Can't block on air
-	if Input.is_action_just_pressed("block") and is_on_floor():
-		can_move = false
-		block()
+	if Input.is_action_just_pressed("block") and is_on_floor() and is_multiplayer_authority():
+		block.rpc()
 	
 	move_and_slide()
 
@@ -58,17 +59,19 @@ func apply_gravity(delta):
 	if not is_on_floor():
 		velocity.y -= gravity * delta
 
-
+@rpc("call_local")
 func block() -> void:
 	is_attacking = true
 	animation_tree.get("parameters/playback").travel("Block")
 	var shield_instance = player_shield.instantiate()
 	shield_instance.global_rotation.y = rad_to_deg(PI/2)
-	shield_spawner.add_child(shield_instance)
+	add_sibling(shield_instance)
 	shield_instance.global_position = shield_spawner.global_position
-	shield_instance.appear()
-	# Await to the block animation to finish
-	await get_tree().create_timer(1.0667).timeout
+	# TODO: Make animation with tweens
+	#shield_instance.appear_animation()
+
+	# TODO: Make animation with tweens
+	# disappear needs to be queued freed
 	shield_instance.disappear()
 	can_move = true
 	is_attacking = false
@@ -110,6 +113,8 @@ func handle_animations() -> void:
 func setup(player_data: Statics.PlayerData) -> void:
 	name = str(player_data.id)
 	set_multiplayer_authority(player_data.id)
+	Debug.sprint(multiplayer)
+	camera_3d.current = is_multiplayer_authority()
 
 @rpc
 func send_data(pos: Vector3, vel: Vector3, rotation):
