@@ -7,4 +7,5 @@ func appear() -> void:
 
 
 func disappear() -> void:
-	animation_player.play("disappear")
+	await get_tree().create_timer(10.0).timeout
+	queue_free()
