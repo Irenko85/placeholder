@@ -28,13 +28,17 @@ func _ready() -> void:
 	Input.mouse_mode = Input.MOUSE_MODE_CAPTURED 
 
 
+func _manage_camera(event: InputEvent) -> void:
+	if is_multiplayer_authority() and event is InputEventMouseMotion:
+		spring_arm_pivot.rotate_y(deg_to_rad(-event.relative.x * sensitivity))
+		rig.rotate_y(deg_to_rad(-event.relative.x * sensitivity))
+		spring_arm_3d.rotate_x(deg_to_rad(-event.relative.y * sensitivity))
+		spring_arm_3d.rotation.x = clamp(spring_arm_3d.rotation.x, -PI/4, PI/4)
+
 func _input(event: InputEvent) -> void:
 	if event.is_action_pressed("quit"):
 		get_tree().quit()
-	if event is InputEventMouseMotion:
-		spring_arm_pivot.rotate_y(deg_to_rad(-event.relative.x * sensitivity))
-		spring_arm_3d.rotate_x(deg_to_rad(-event.relative.y * sensitivity))
-		spring_arm_3d.rotation.x = clamp(spring_arm_3d.rotation.x, -PI/4, PI/4)
+	_manage_camera(event)
 
 
 func _physics_process(delta: float) -> void:
@@ -51,6 +55,7 @@ func _physics_process(delta: float) -> void:
 	if Input.is_action_just_pressed("block") and is_on_floor() and is_multiplayer_authority():
 		block.rpc()
 	
+	send_data.rpc(global_position, velocity, rig.rotation)
 	move_and_slide()
 
 
@@ -83,10 +88,8 @@ func movement(delta) -> void:
 		velocity.y = 0
 		var input = Input.get_vector("move_left", "move_right", "move_forward", "move_backwards")
 		var direction = Vector3(input.x, 0, input.y).rotated(Vector3.UP, spring_arm_pivot.rotation.y)
-		rig.rotation.y = lerp_angle(rig.rotation.y, atan2(-velocity.x, -velocity.z), LERP_VALUE)
 		velocity = lerp(velocity, direction * speed, acceleration * delta)
 		velocity.y = vy
-		send_data.rpc(global_position, velocity, rig.rotation)
 
 
 func handle_animations() -> void:
