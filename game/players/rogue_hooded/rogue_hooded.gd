@@ -14,7 +14,7 @@ var gravity: float = ProjectSettings.get_setting("physics/3d/default_gravity")
 var jumping: bool = false
 var can_move: bool = true
 var was_on_floor: bool = true
-var is_attacking: bool = false
+var can_jump: bool = true
 
 @onready var spring_arm_pivot: Node3D = $SpringArmPivot
 @onready var spring_arm_3d: SpringArm3D = $SpringArmPivot/SpringArm3D
@@ -66,7 +66,6 @@ func apply_gravity(delta):
 
 @rpc("call_local")
 func block() -> void:
-	is_attacking = true
 	animation_tree.get("parameters/playback").travel("Block")
 	
 	var shield_instance = player_shield.instantiate()
@@ -74,10 +73,6 @@ func block() -> void:
 	add_sibling(shield_instance)
 	shield_instance.global_position = shield_spawner.global_position
 	shield_instance.appear()
-	
-	can_move = true
-	is_attacking = false
-
 
 func movement(delta) -> void:
 	if is_multiplayer_authority():
@@ -90,7 +85,7 @@ func movement(delta) -> void:
 
 
 func handle_animations() -> void:
-	if Input.is_action_just_pressed("ui_accept") and is_on_floor() and not is_attacking:
+	if Input.is_action_just_pressed("ui_accept") and is_on_floor() and can_jump:
 		velocity.y = jump_velocity
 		jumping = true
 		animation_tree.set("parameters/conditions/jumping", true)
