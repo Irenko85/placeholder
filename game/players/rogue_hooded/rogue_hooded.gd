@@ -68,16 +68,13 @@ func apply_gravity(delta):
 func block() -> void:
 	is_attacking = true
 	animation_tree.get("parameters/playback").travel("Block")
+	
 	var shield_instance = player_shield.instantiate()
 	shield_instance.global_rotation.y = rad_to_deg(PI/2)
 	add_sibling(shield_instance)
 	shield_instance.global_position = shield_spawner.global_position
-	# TODO: Make animation with tweens
-	#shield_instance.appear_animation()
-
-	# TODO: Make animation with tweens
-	# disappear needs to be queued freed
-	shield_instance.disappear()
+	shield_instance.appear()
+	
 	can_move = true
 	is_attacking = false
 

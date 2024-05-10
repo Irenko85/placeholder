@@ -1,11 +1,14 @@
 extends Node3D
 
-@onready var animation_player: AnimationPlayer = $AnimationPlayer
-
 func appear() -> void:
-	animation_player.play("appear")
-
+	position.y = -5
+	var tween = get_tree().create_tween()
+	tween.tween_property(self, "position:y", 0, 0.4).set_trans(Tween.TRANS_ELASTIC)
+	tween.tween_interval(5)
+	tween.tween_callback(disappear)
 
 func disappear() -> void:
-	await get_tree().create_timer(10.0).timeout
-	queue_free()
+	var tween = get_tree().create_tween()
+	tween.tween_property(self, "position:y", -5, 1)
+	tween.tween_callback(queue_free)
+
