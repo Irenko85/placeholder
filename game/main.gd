@@ -9,8 +9,8 @@ extends Node3D
 func  _ready() -> void:
 	for player_data in Game.players:
 		var player = player_scene.instantiate()
-		player.setup(player_data)
 		players.add_child(player)
+		player.setup(player_data)
 
 		if len(players.get_children()) == 1:
 			player.global_position = player_a.global_position
