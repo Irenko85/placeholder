@@ -22,6 +22,7 @@ var can_jump: bool = true
 @onready var animation_tree: AnimationTree = $AnimationTree
 @onready var shield_spawner: Node3D = %ShieldSpawner
 @onready var camera_3d: Camera3D = $SpringArmPivot/SpringArm3D/Camera3D
+@onready var dash_timer = $DashTimer
 
 
 func _ready() -> void:
@@ -93,7 +94,11 @@ func jump() -> void:
 	jumping = true
 	
 func dash(direction) -> void:
+	Debug.sprint(dash_timer.time_left)
+	if dash_timer.time_left > 0:
+		return
 	velocity = direction * speed * 5
+	dash_timer.start()
 
 func handle_animations() -> void:
 	if jumping:
@@ -116,7 +121,6 @@ func handle_animations() -> void:
 func setup(player_data: Statics.PlayerData) -> void:
 	name = str(player_data.id)
 	set_multiplayer_authority(player_data.id)
-	Debug.sprint(multiplayer)
 	camera_3d.current = is_multiplayer_authority()
 
 @rpc
