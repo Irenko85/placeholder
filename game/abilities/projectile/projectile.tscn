@@ -1,0 +1,20 @@
+[gd_scene load_steps=4 format=3 uid="uid://em1sf73nscno"]
+
+[ext_resource type="PackedScene" uid="uid://cfkq0ec5hduvp" path="res://game/abilities/projectile/projectile.glb" id="1_omrpw"]
+[ext_resource type="Texture2D" uid="uid://bpcenqcv7juct" path="res://game/abilities/projectile/projectile_color_atlas.png" id="2_74thi"]
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_sbqha"]
+resource_name = "color_atlas"
+cull_mode = 2
+albedo_color = Color(0.792157, 0.584314, 0.403922, 1)
+albedo_texture = ExtResource("2_74thi")
+roughness = 0.5
+
+[node name="Projectile" type="Node3D"]
+
+[node name="projectile" parent="." instance=ExtResource("1_omrpw")]
+
+[node name="rock2_cave_light" parent="projectile" index="0"]
+surface_material_override/0 = SubResource("StandardMaterial3D_sbqha")
+
+[editable path="projectile"]
