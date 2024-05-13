@@ -24,10 +24,6 @@ Game="*res://game/game.tscn"
 
 project/assembly_name="multiplayer_example"
 
-[filesystem]
-
-import/fbx/enabled=false
-
 [gui]
 
 theme/custom="res://resources/theme.tres"
