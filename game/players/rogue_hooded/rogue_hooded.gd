@@ -54,8 +54,9 @@ func _physics_process(delta: float) -> void:
 	# Can't block on air
 	if Input.is_action_just_pressed("block") and is_on_floor() and is_multiplayer_authority():
 		block.rpc()
-	
-	send_data.rpc(global_position, velocity, rig.rotation)
+		
+	if is_multiplayer_authority():
+		send_data.rpc(global_position, velocity, rig.rotation)
 	move_and_slide()
 
 
