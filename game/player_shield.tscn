@@ -1,0 +1,73 @@
+[gd_scene load_steps=7 format=3 uid="uid://bl31fviattnq5"]
+
+[ext_resource type="PackedScene" uid="uid://b8klhmygeq2yi" path="res://models/StylisedRockCollection3.fbx" id="1_mwyjx"]
+[ext_resource type="Script" path="res://game/player_shield.gd" id="2_mfbhe"]
+
+[sub_resource type="Animation" id="Animation_wp477"]
+length = 0.001
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath(".:position")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [Vector3(0, -2.22042, 0)]
+}
+
+[sub_resource type="Animation" id="Animation_qkd3i"]
+resource_name = "appear"
+length = 0.25
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath(".:position")
+tracks/0/interp = 2
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0, 0.25),
+"transitions": PackedFloat32Array(1.93187, 0.392292),
+"update": 0,
+"values": [Vector3(0, -2.22042, 0), Vector3(0, 0, 0)]
+}
+
+[sub_resource type="Animation" id="Animation_i1x5s"]
+resource_name = "disappear"
+length = 5.0
+step = 0.05
+tracks/0/type = "method"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath(".")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(4.95),
+"transitions": PackedFloat32Array(1),
+"values": [{
+"args": [],
+"method": &"queue_free"
+}]
+}
+
+[sub_resource type="AnimationLibrary" id="AnimationLibrary_y4xk3"]
+_data = {
+"RESET": SubResource("Animation_wp477"),
+"appear": SubResource("Animation_qkd3i"),
+"disappear": SubResource("Animation_i1x5s")
+}
+
+[node name="Shield" instance=ExtResource("1_mwyjx")]
+transform = Transform3D(0, 0, 0, 0, 0, 0, 0, 0, 0, 0, -2.22042, 0)
+script = ExtResource("2_mfbhe")
+
+[node name="Rock3_3" parent="RootNode" index="0"]
+transform = Transform3D(50, 0, 0, 0, -2.18557e-06, 50, 0, -50, -2.18557e-06, 0, 1.01201, 0)
+
+[node name="AnimationPlayer" type="AnimationPlayer" parent="." index="1"]
+libraries = {
+"": SubResource("AnimationLibrary_y4xk3")
+}
