@@ -83,15 +83,17 @@ func movement(delta) -> void:
 		var direction = Vector3(input.x, 0, input.y).rotated(Vector3.UP, spring_arm_pivot.rotation.y)
 		velocity = lerp(velocity, direction * speed, acceleration * delta)
 		velocity.y = vy
+		if Input.is_action_just_pressed("jump") and is_on_floor() and can_jump:
+			jump()
 
+func jump() -> void:
+	velocity.y = jump_velocity
+	jumping = true
 
 func handle_animations() -> void:
-	if Input.is_action_just_pressed("ui_accept") and is_on_floor() and can_jump:
-		velocity.y = jump_velocity
-		jumping = true
+	if jumping:
 		animation_tree.set("parameters/conditions/jumping", true)
 		animation_tree.set("parameters/conditions/grounded", false)
-		
 	if is_on_floor() and not was_on_floor:
 		jumping = false
 		animation_tree.set("parameters/conditions/jumping", false)
