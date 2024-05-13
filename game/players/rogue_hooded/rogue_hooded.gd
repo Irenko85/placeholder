@@ -85,10 +85,15 @@ func movement(delta) -> void:
 		velocity.y = vy
 		if Input.is_action_just_pressed("jump") and is_on_floor() and can_jump:
 			jump()
+		if Input.is_action_just_pressed("dash"):
+			dash(direction)
 
 func jump() -> void:
 	velocity.y = jump_velocity
 	jumping = true
+	
+func dash(direction) -> void:
+	velocity = direction * speed * 5
 
 func handle_animations() -> void:
 	if jumping:
