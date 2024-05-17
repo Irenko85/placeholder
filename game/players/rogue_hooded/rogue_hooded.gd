@@ -70,9 +70,9 @@ func block() -> void:
 	animation_tree.get("parameters/playback").travel("Block")
 	
 	var shield_instance = player_shield.instantiate()
-	shield_instance.global_rotation.y = rad_to_deg(PI/2)
 	add_sibling(shield_instance)
 	shield_instance.global_position = shield_spawner.global_position
+	shield_instance.global_rotation = shield_spawner.global_rotation
 	shield_instance.appear()
 
 func movement(delta) -> void:
