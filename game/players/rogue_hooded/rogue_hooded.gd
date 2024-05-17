@@ -86,7 +86,7 @@ func block() -> void:
 @rpc("call_local")
 func throw_projectile() -> void:
 	# change the animation to throw
-	#animation_tree.get("parameters/playback").travel("Throw") 
+	animation_tree.get("parameters/playback").travel("Throw")
 	
 	var projectile_instance = projectile.instantiate()
 	add_sibling(projectile_instance)
