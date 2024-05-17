@@ -7,7 +7,9 @@ class_name Player
 @export var acceleration: float = 4.0
 @export var sensitivity: float = 0.3
 
+@export_category("Abilities")
 @export var player_shield: PackedScene
+@export var projectile: PackedScene
 
 # Get the gravity from the project settings to be synced with RigidBody nodes.
 var gravity: float = ProjectSettings.get_setting("physics/3d/default_gravity")
@@ -20,9 +22,11 @@ var can_jump: bool = true
 @onready var spring_arm_3d: SpringArm3D = $SpringArmPivot/SpringArm3D
 @onready var rig: Node3D = $Rig
 @onready var animation_tree: AnimationTree = $AnimationTree
-@onready var shield_spawner: Node3D = %ShieldSpawner
 @onready var camera_3d: Camera3D = $SpringArmPivot/SpringArm3D/Camera3D
 @onready var dash_timer = $DashTimer
+
+@onready var shield_spawner: Node3D = %ShieldSpawner
+@onready var projectile_spawner = %ProjectileSpawner
 
 
 func _ready() -> void:
@@ -52,6 +56,9 @@ func _physics_process(delta: float) -> void:
 		velocity.x = lerp(velocity.x, 0.0, acceleration * delta)
 		velocity.z = lerp(velocity.z, 0.0, acceleration * delta)
 	
+	if Input.is_action_just_pressed("throw"):
+		throw_projectile.rpc()
+	
 	# Can't block on air
 	if Input.is_action_just_pressed("block") and is_on_floor() and is_multiplayer_authority():
 		block.rpc()
@@ -75,6 +82,17 @@ func block() -> void:
 	shield_instance.global_position = shield_spawner.global_position
 	shield_instance.global_rotation = shield_spawner.global_rotation
 	shield_instance.appear()
+	
+@rpc("call_local")
+func throw_projectile() -> void:
+	# change the animation to throw
+	#animation_tree.get("parameters/playback").travel("Throw") 
+	
+	var projectile_instance = projectile.instantiate()
+	add_sibling(projectile_instance)
+	projectile_instance.global_position = projectile_spawner.global_position
+	projectile_instance.global_rotation = projectile_spawner.global_rotation
+	projectile_instance.direction = -camera_3d.get_global_transform().basis.z
 
 func movement(delta) -> void:
 	if is_multiplayer_authority():
