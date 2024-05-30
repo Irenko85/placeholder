@@ -18,11 +18,11 @@ var can_move: bool = true
 var was_on_floor: bool = true
 var can_jump: bool = true
 
-@onready var spring_arm_pivot: Node3D = $SpringArmPivot
-@onready var spring_arm_3d: SpringArm3D = $SpringArmPivot/SpringArm3D
+@onready var spring_arm_pivot: Node3D = $Rig/SpringArmPivot
+@onready var spring_arm_3d: SpringArm3D = $Rig/SpringArmPivot/SpringArm3D
 @onready var rig: Node3D = $Rig
 @onready var animation_tree: AnimationTree = $AnimationTree
-@onready var camera_3d: Camera3D = $SpringArmPivot/SpringArm3D/Camera3D
+@onready var camera_3d: Camera3D = $Rig/SpringArmPivot/SpringArm3D/Camera3D
 @onready var dash_timer = $DashTimer
 
 @onready var shield_spawner: Node3D = %ShieldSpawner
@@ -35,7 +35,6 @@ func _ready() -> void:
 
 func _manage_camera(event: InputEvent) -> void:
 	if is_multiplayer_authority() and event is InputEventMouseMotion:
-		spring_arm_pivot.rotate_y(deg_to_rad(-event.relative.x * sensitivity))
 		rig.rotate_y(deg_to_rad(-event.relative.x * sensitivity))
 		spring_arm_3d.rotate_x(deg_to_rad(-event.relative.y * sensitivity))
 		spring_arm_3d.rotation.x = clamp(spring_arm_3d.rotation.x, -PI/4, PI/4)
@@ -99,7 +98,7 @@ func movement(delta) -> void:
 		var vy = velocity.y
 		velocity.y = 0
 		var input = Input.get_vector("move_left", "move_right", "move_forward", "move_backwards")
-		var direction = Vector3(input.x, 0, input.y).rotated(Vector3.UP, spring_arm_pivot.rotation.y)
+		var direction = Vector3(input.x, 0, input.y).rotated(Vector3.UP, rig.rotation.y)
 		velocity = lerp(velocity, direction * speed, acceleration * delta)
 		velocity.y = vy
 		if Input.is_action_just_pressed("jump") and is_on_floor() and can_jump:
