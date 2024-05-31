@@ -6,6 +6,7 @@ class_name Player
 @export var LERP_VALUE: float = 0.15
 @export var acceleration: float = 4.0
 @export var sensitivity: float = 0.3
+@export var player_health: float = 100.0
 
 @export_category("Abilities")
 @export var player_shield: PackedScene
@@ -24,7 +25,6 @@ var can_jump: bool = true
 @onready var animation_tree: AnimationTree = $AnimationTree
 @onready var camera_3d: Camera3D = $Rig/SpringArmPivot/SpringArm3D/Camera3D
 @onready var dash_timer = $DashTimer
-
 @onready var shield_spawner: Node3D = %ShieldSpawner
 @onready var projectile_spawner = %ProjectileSpawner
 
@@ -72,6 +72,7 @@ func apply_gravity(delta):
 	if not is_on_floor():
 		velocity.y -= gravity * delta
 
+
 @rpc("call_local")
 func block() -> void:
 	animation_tree.get("parameters/playback").travel("Block")
@@ -81,7 +82,8 @@ func block() -> void:
 	shield_instance.global_position = shield_spawner.global_position
 	shield_instance.global_rotation = shield_spawner.global_rotation
 	shield_instance.appear()
-	
+
+
 @rpc("call_local")
 func throw_projectile() -> void:
 	# change the animation to throw
@@ -92,6 +94,7 @@ func throw_projectile() -> void:
 	projectile_instance.global_position = projectile_spawner.global_position
 	projectile_instance.global_rotation = projectile_spawner.global_rotation
 	projectile_instance.direction = -camera_3d.get_global_transform().basis.z
+
 
 func movement(delta) -> void:
 	if is_multiplayer_authority():
@@ -106,16 +109,19 @@ func movement(delta) -> void:
 		if Input.is_action_just_pressed("dash"):
 			dash(direction)
 
+
 func jump() -> void:
 	velocity.y = jump_velocity
 	jumping = true
-	
+
+
 func dash(direction) -> void:
 	Debug.sprint(dash_timer.time_left)
 	if dash_timer.time_left > 0:
 		return
 	velocity = direction * speed * 5
 	dash_timer.start()
+
 
 func handle_animations() -> void:
 	if jumping:
@@ -135,14 +141,27 @@ func handle_animations() -> void:
 		
 	was_on_floor = is_on_floor()
 
+
 func setup(player_data: Statics.PlayerData) -> void:
 	name = str(player_data.id)
 	set_multiplayer_authority(player_data.id)
 	camera_3d.current = is_multiplayer_authority()
+
 
 @rpc
 func send_data(pos: Vector3, vel: Vector3, rotation):
 	global_position = lerp(global_position, pos, 0.75)
 	velocity = lerp(velocity, vel, 0.75)
 	rig.rotation = lerp(rig.rotation, rotation, 0.75)
-	
+
+
+func take_damage(amount: float) -> void:
+	player_health -= amount
+	if player_health <= 0:
+		player_health = 0
+		die()
+
+
+func die() -> void:
+	animation_tree.get("parameters/playback").travel("Death")
+	can_move = false
