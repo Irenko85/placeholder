@@ -55,7 +55,7 @@ func _physics_process(delta: float) -> void:
 		velocity.x = lerp(velocity.x, 0.0, acceleration * delta)
 		velocity.z = lerp(velocity.z, 0.0, acceleration * delta)
 	
-	if Input.is_action_just_pressed("throw"):
+	if Input.is_action_just_pressed("throw") and is_multiplayer_authority():
 		throw_projectile.rpc()
 	
 	# Can't block on air
