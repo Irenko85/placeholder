@@ -1,4 +1,4 @@
-[gd_scene load_steps=5 format=3 uid="uid://em1sf73nscno"]
+[gd_scene load_steps=6 format=3 uid="uid://em1sf73nscno"]
 
 [ext_resource type="Script" path="res://game/abilities/projectile/projectile.gd" id="1_8ejkr"]
 [ext_resource type="PackedScene" uid="uid://cfkq0ec5hduvp" path="res://game/abilities/projectile/projectile.glb" id="1_omrpw"]
@@ -10,6 +10,9 @@ cull_mode = 2
 albedo_color = Color(0.792157, 0.584314, 0.403922, 1)
 albedo_texture = ExtResource("2_74thi")
 roughness = 0.5
+
+[sub_resource type="SphereShape3D" id="SphereShape3D_ltxtv"]
+radius = 0.375646
 
 [node name="Projectile" type="Node3D"]
 script = ExtResource("1_8ejkr")
@@ -25,6 +28,15 @@ wait_time = 3.0
 one_shot = true
 autostart = true
 
+[node name="Area3D" type="Area3D" parent="."]
+collision_layer = 4
+collision_mask = 7
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Area3D"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.15694, 0)
+shape = SubResource("SphereShape3D_ltxtv")
+
 [connection signal="timeout" from="QueueFreeTimer" to="." method="_on_timer_timeout"]
+[connection signal="body_entered" from="Area3D" to="." method="_on_area_3d_body_entered"]
 
 [editable path="projectile"]
