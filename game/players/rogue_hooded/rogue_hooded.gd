@@ -116,7 +116,6 @@ func jump() -> void:
 
 
 func dash(direction) -> void:
-	Debug.sprint(dash_timer.time_left)
 	if dash_timer.time_left > 0:
 		return
 	velocity = direction * speed * 5
