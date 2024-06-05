@@ -11,6 +11,7 @@ class_name Player
 @export_category("Abilities")
 @export var player_shield: PackedScene
 @export var projectile: PackedScene
+@export var quicksand: PackedScene
 
 # Get the gravity from the project settings to be synced with RigidBody nodes.
 var gravity: float = ProjectSettings.get_setting("physics/3d/default_gravity")
@@ -73,6 +74,9 @@ func _physics_process(delta: float) -> void:
 	# Can't block on air
 	if Input.is_action_just_pressed("block") and is_on_floor() and is_multiplayer_authority():
 		block()
+		
+	if Input.is_action_just_pressed("quicksand") and is_multiplayer_authority():
+		spawn_quicksand.rpc()
 
 	if is_multiplayer_authority():
 		send_data.rpc(global_position, velocity, rig.rotation)
@@ -219,3 +223,19 @@ func die() -> void:
 	set_physics_process(false)
 	set_process_input(false)
 
+
+@rpc("call_local")
+func spawn_quicksand() -> void:
+	animation_tree.get("parameters/playback").travel("Quicksand")
+	var quicksand_instance = quicksand.instantiate()
+	add_sibling(quicksand_instance)
+	
+	# TODO: Create a general spawner node? it works fine with the
+	# shield_spawner global positions and rotations
+	quicksand_instance.global_position.x = shield_spawner.global_position.x
+	quicksand_instance.global_position.z = shield_spawner.global_position.z
+	quicksand_instance.global_rotation = shield_spawner.global_rotation
+	
+	# TODO: Another way to do this?
+	quicksand_instance.global_rotation.y += PI/2
+	quicksand_instance.appear()
