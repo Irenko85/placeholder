@@ -24,9 +24,20 @@ var can_jump: bool = true
 @onready var rig: Node3D = $Rig
 @onready var animation_tree: AnimationTree = $AnimationTree
 @onready var camera_3d: Camera3D = $Rig/SpringArmPivot/SpringArm3D/Camera3D
-@onready var dash_timer = $DashTimer
 @onready var shield_spawner: Node3D = %ShieldSpawner
-@onready var projectile_spawner = %ProjectileSpawner
+@onready var projectile_spawner: Node3D = %ProjectileSpawner
+
+# Timers
+@onready var dash_timer: Timer = %DashTimer
+@onready var projectile_timer: Timer = %ProjectileTimer
+@onready var shield_timer: Timer = %ShieldTimer
+
+# Cooldown variables
+const MAX_SHIELD_CHARGES: int = 2
+var shield_charges: int = MAX_SHIELD_CHARGES
+
+const MAX_PROJECTILES_AMMO: int = 3
+var projectile_ammo: int = MAX_PROJECTILES_AMMO
 
 
 func _ready() -> void:
@@ -39,6 +50,7 @@ func _manage_camera(event: InputEvent) -> void:
 		spring_arm_3d.rotate_x(deg_to_rad(-event.relative.y * sensitivity))
 		spring_arm_3d.rotation.x = clamp(spring_arm_3d.rotation.x, -PI/4, PI/4)
 
+
 func _input(event: InputEvent) -> void:
 	if event.is_action_pressed("quit"):
 		get_tree().quit()
@@ -48,20 +60,20 @@ func _input(event: InputEvent) -> void:
 func _physics_process(delta: float) -> void:
 	apply_gravity(delta)
 	handle_animations()
-	
+
 	if can_move:
 		movement(delta)
 	else:
 		velocity.x = lerp(velocity.x, 0.0, acceleration * delta)
 		velocity.z = lerp(velocity.z, 0.0, acceleration * delta)
-	
+
 	if Input.is_action_just_pressed("throw") and is_multiplayer_authority():
-		throw_projectile.rpc()
-	
+		shoot()
+
 	# Can't block on air
 	if Input.is_action_just_pressed("block") and is_on_floor() and is_multiplayer_authority():
-		block.rpc()
-		
+		block()
+
 	if is_multiplayer_authority():
 		send_data.rpc(global_position, velocity, rig.rotation)
 	move_and_slide()
@@ -74,9 +86,9 @@ func apply_gravity(delta):
 
 
 @rpc("call_local")
-func block() -> void:
+func spawn_shield() -> void:
 	animation_tree.get("parameters/playback").travel("Block")
-	
+
 	var shield_instance = player_shield.instantiate()
 	add_sibling(shield_instance)
 	shield_instance.global_position = shield_spawner.global_position
@@ -84,16 +96,54 @@ func block() -> void:
 	shield_instance.appear()
 
 
+func block() -> void:
+	if shield_charges <= 0:
+		return
+		
+	spawn_shield.rpc()
+
+	# Timer is started automatically when
+	# shields charges are missing, so it only 
+	# needs to be called when charges are full
+	if shield_charges == MAX_SHIELD_CHARGES:
+		shield_timer.start()
+
+	shield_charges -= 1
+
+
+func _on_shield_timer_timeout() -> void:
+	shield_charges += 1
+	if shield_charges < MAX_SHIELD_CHARGES:
+		shield_timer.start()
+
+
+func shoot() -> void:
+	if projectile_ammo == 0:
+		return
+
+	spawn_projectile.rpc()
+	if projectile_ammo == MAX_PROJECTILES_AMMO:
+		projectile_timer.start()
+
+	projectile_ammo -= 1
+
+
 @rpc("call_local")
-func throw_projectile() -> void:
+func spawn_projectile() -> void:
 	# change the animation to throw
 	animation_tree.get("parameters/playback").travel("Throw")
-	
+
 	var projectile_instance = projectile.instantiate()
 	add_sibling(projectile_instance)
 	projectile_instance.global_position = projectile_spawner.global_position
 	projectile_instance.global_rotation = projectile_spawner.global_rotation
 	projectile_instance.direction = -camera_3d.get_global_transform().basis.z
+
+
+func _on_projectile_timer_timeout() -> void:
+	projectile_ammo += 1
+	if projectile_ammo < MAX_PROJECTILES_AMMO:
+		projectile_timer.start()
 
 
 func movement(delta) -> void:
@@ -130,14 +180,14 @@ func handle_animations() -> void:
 		jumping = false
 		animation_tree.set("parameters/conditions/jumping", false)
 		animation_tree.set("parameters/conditions/grounded", true)
-		
+
 	if not is_on_floor() and not jumping:
 		animation_tree.get("parameters/playback").travel("Jump_Idle")
 		animation_tree.set("parameters/conditions/grounded", false)
-		
+
 	var vl = velocity * rig.transform.basis
 	animation_tree.set("parameters/Movement/blend_position", Vector2(vl.x, -vl.z) / speed)
-		
+
 	was_on_floor = is_on_floor()
 
 
@@ -168,3 +218,4 @@ func die() -> void:
 	can_move = false
 	set_physics_process(false)
 	set_process_input(false)
+
