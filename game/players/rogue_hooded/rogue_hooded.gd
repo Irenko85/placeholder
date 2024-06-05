@@ -121,7 +121,7 @@ func shoot() -> void:
 	if projectile_ammo == 0:
 		return
 
-	spawn_projectile.rpc()
+	spawn_projectile.rpc(-camera_3d.get_global_transform().basis.z)
 	if projectile_ammo == MAX_PROJECTILES_AMMO:
 		projectile_timer.start()
 
@@ -129,7 +129,7 @@ func shoot() -> void:
 
 
 @rpc("call_local")
-func spawn_projectile() -> void:
+func spawn_projectile(camera_dir) -> void:
 	# change the animation to throw
 	animation_tree.get("parameters/playback").travel("Throw")
 
@@ -137,8 +137,10 @@ func spawn_projectile() -> void:
 	add_sibling(projectile_instance)
 	projectile_instance.global_position = projectile_spawner.global_position
 	projectile_instance.global_rotation = projectile_spawner.global_rotation
-	projectile_instance.direction = -camera_3d.get_global_transform().basis.z
+	projectile_instance.direction = camera_dir
 
+	
+	
 
 func _on_projectile_timer_timeout() -> void:
 	projectile_ammo += 1
