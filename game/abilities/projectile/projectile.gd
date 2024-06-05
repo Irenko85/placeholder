@@ -6,6 +6,10 @@ const ROTATION_SPEED: float = 5.0
 const DAMAGE: float = 25.0
 
 
+func _ready() -> void:
+	AudioManager.play_toss_sound()
+
+
 func _process(delta) -> void:
 	global_position += delta * direction * SPEED
 	rotation.x += delta * ROTATION_SPEED
