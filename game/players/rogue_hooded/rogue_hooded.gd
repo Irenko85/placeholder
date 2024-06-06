@@ -7,11 +7,12 @@ class_name Player
 @export var acceleration: float = 4.0
 @export var sensitivity: float = 0.3
 @export var player_health: float = 100.0
+@export var throw_force: float = 5.0
 
 @export_category("Abilities")
 @export var player_shield: PackedScene
 @export var projectile: PackedScene
-@export var quicksand: PackedScene
+@export var quicksand_grenade: PackedScene
 
 # Get the gravity from the project settings to be synced with RigidBody nodes.
 var gravity: float = ProjectSettings.get_setting("physics/3d/default_gravity")
@@ -19,6 +20,7 @@ var jumping: bool = false
 var can_move: bool = true
 var was_on_floor: bool = true
 var can_jump: bool = true
+var can_throw_grenade: bool = true
 
 @onready var spring_arm_pivot: Node3D = $Rig/SpringArmPivot
 @onready var spring_arm_3d: SpringArm3D = $Rig/SpringArmPivot/SpringArm3D
@@ -32,6 +34,7 @@ var can_jump: bool = true
 @onready var dash_timer: Timer = %DashTimer
 @onready var projectile_timer: Timer = %ProjectileTimer
 @onready var shield_timer: Timer = %ShieldTimer
+@onready var grenade_timer: Timer = %GrenadeTimer
 
 # Cooldown variables
 const MAX_SHIELD_CHARGES: int = 2
@@ -76,7 +79,7 @@ func _physics_process(delta: float) -> void:
 		block()
 		
 	if Input.is_action_just_pressed("quicksand") and is_multiplayer_authority():
-		spawn_quicksand.rpc()
+		throw_grenade.rpc()
 
 	if is_multiplayer_authority():
 		send_data.rpc(global_position, velocity, rig.rotation)
@@ -225,17 +228,23 @@ func die() -> void:
 
 
 @rpc("call_local")
-func spawn_quicksand() -> void:
-	animation_tree.get("parameters/playback").travel("Quicksand")
-	var quicksand_instance = quicksand.instantiate()
-	add_sibling(quicksand_instance)
+func throw_grenade() -> void:
+	if not can_throw_grenade:
+		return
+
+	var up_direction: float = 5.0
+	animation_tree.get("parameters/playback").travel("Throw")
+	var grenade_instance = quicksand_grenade.instantiate() as RigidBody3D
+	grenade_instance.position = projectile_spawner.global_position
+	add_sibling(grenade_instance)
+	var player_rotation = rig.global_transform.basis.z.normalized()
 	
-	# TODO: Create a general spawner node? it works fine with the
-	# shield_spawner global positions and rotations
-	quicksand_instance.global_position.x = shield_spawner.global_position.x
-	quicksand_instance.global_position.z = shield_spawner.global_position.z
-	quicksand_instance.global_rotation = shield_spawner.global_rotation
-	
-	# TODO: Another way to do this?
-	quicksand_instance.global_rotation.y += PI/2
-	quicksand_instance.appear()
+	grenade_instance.apply_central_impulse(
+		player_rotation * -throw_force + Vector3(0, up_direction, 0)
+	)
+	grenade_timer.start()
+	can_throw_grenade = false
+
+
+func _on_grenade_timer_timeout() -> void:
+	can_throw_grenade = true
