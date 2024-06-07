@@ -8,7 +8,7 @@ const DEFAULT_SPEED: float = 5.0
 func appear() -> void:
 	position.y = -5
 	var tween = get_tree().create_tween()
-	tween.tween_property(self, "position:y", -0.9, 0.3).set_trans(Tween.TRANS_SINE)
+	tween.tween_property(self, "position:y", -0.9, 0.4).set_trans(Tween.TRANS_SPRING)
 	tween.tween_interval(DURATION)
 	tween.tween_callback(disappear)
 

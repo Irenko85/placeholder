@@ -31,5 +31,11 @@ transform = Transform3D(0.476933, 0, 0, 0, 0.268958, 0, 0, 0, 0.436766, 0.000588
 transform = Transform3D(1, 0, 0, 0, 0.993087, 0.117381, 0, -0.117381, 0.993087, -0.0101396, 0, -0.0311577)
 shape = SubResource("CapsuleShape3D_j8g2v")
 
+[node name="OmniLight3D" type="OmniLight3D" parent="."]
+light_color = Color(1, 0.82424, 0.585178, 1)
+light_energy = 5.0
+light_size = 0.025
+omni_range = 0.467175
+
 [connection signal="body_entered" from="." to="." method="_on_body_entered"]
 [connection signal="timeout" from="ExplosionTimer" to="." method="_on_explosion_timer_timeout"]

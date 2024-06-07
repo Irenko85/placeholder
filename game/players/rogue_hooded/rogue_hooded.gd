@@ -146,8 +146,6 @@ func spawn_projectile(camera_dir) -> void:
 	projectile_instance.global_rotation = projectile_spawner.global_rotation
 	projectile_instance.direction = camera_dir
 
-	
-	
 
 func _on_projectile_timer_timeout() -> void:
 	projectile_ammo += 1
@@ -224,7 +222,7 @@ func take_damage(amount: float) -> void:
 @rpc("call_local")
 func die() -> void:
 	animation_tree.get("parameters/playback").travel("Death")
-	can_move = false
+	#can_move = false
 	set_physics_process(false)
 	set_process_input(false)
 
