@@ -3,13 +3,13 @@
 importer="scene"
 importer_version=1
 type="PackedScene"
-uid="uid://bgc0fgol2ghbm"
-path="res://.godot/imported/Bomb.gltf-eb1432ab4e31876e7ffe60713e046b87.scn"
+uid="uid://dcv70nbbhiet6"
+path="res://.godot/imported/scene.gltf-2e1b028b003afdf4748d980a443c9fc5.scn"
 
 [deps]
 
-source_file="res://game/abilities/quicksand/Bomb.gltf"
-dest_files=["res://.godot/imported/Bomb.gltf-eb1432ab4e31876e7ffe60713e046b87.scn"]
+source_file="res://game/abilities/quicksand/scene.gltf"
+dest_files=["res://.godot/imported/scene.gltf-2e1b028b003afdf4748d980a443c9fc5.scn"]
 
 [params]
 
@@ -29,6 +29,12 @@ animation/fps=30
 animation/trimming=false
 animation/remove_immutable_tracks=true
 import_script/path=""
-_subresources={}
+_subresources={
+"nodes": {
+"PATH:Sketchfab_model/Collada visual scene group/PolySphere/defaultMaterial": {
+"physics/mask": 7
+}
+}
+}
 gltf/naming_version=1
 gltf/embedded_image_handling=1

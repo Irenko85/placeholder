@@ -45,7 +45,7 @@ var projectile_ammo: int = MAX_PROJECTILES_AMMO
 
 
 func _ready() -> void:
-	Input.mouse_mode = Input.MOUSE_MODE_CAPTURED 
+	Input.mouse_mode = Input.MOUSE_MODE_CAPTURED
 
 
 func _manage_camera(event: InputEvent) -> void:
