@@ -1,0 +1,35 @@
+[gd_scene load_steps=6 format=3 uid="uid://b0huwqlhivvnq"]
+
+[ext_resource type="Script" path="res://game/abilities/quicksand/quicksand_grenade.gd" id="1_xd1u4"]
+[ext_resource type="PackedScene" uid="uid://dv6v65mkv7cyu" path="res://game/abilities/quicksand/quicksand.tscn" id="2_psrp8"]
+[ext_resource type="PackedScene" uid="uid://dcv70nbbhiet6" path="res://game/abilities/quicksand/scene.gltf" id="3_6sn1t"]
+
+[sub_resource type="PhysicsMaterial" id="PhysicsMaterial_p8b7l"]
+bounce = 0.4
+
+[sub_resource type="CapsuleShape3D" id="CapsuleShape3D_j8g2v"]
+radius = 0.244086
+height = 0.558078
+
+[node name="Grenade" type="RigidBody3D"]
+collision_mask = 7
+physics_material_override = SubResource("PhysicsMaterial_p8b7l")
+continuous_cd = true
+max_contacts_reported = 1
+contact_monitor = true
+script = ExtResource("1_xd1u4")
+quicksand = ExtResource("2_psrp8")
+
+[node name="ExplosionTimer" type="Timer" parent="."]
+wait_time = 0.15
+one_shot = true
+
+[node name="orb" parent="." instance=ExtResource("3_6sn1t")]
+transform = Transform3D(0.476933, 0, 0, 0, 0.268958, 0, 0, 0, 0.436766, 0.00058805, 0, -0.000305582)
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 0.993087, 0.117381, 0, -0.117381, 0.993087, -0.0101396, 0, -0.0311577)
+shape = SubResource("CapsuleShape3D_j8g2v")
+
+[connection signal="body_entered" from="." to="." method="_on_body_entered"]
+[connection signal="timeout" from="ExplosionTimer" to="." method="_on_explosion_timer_timeout"]

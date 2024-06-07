@@ -7,10 +7,12 @@ class_name Player
 @export var acceleration: float = 4.0
 @export var sensitivity: float = 0.3
 @export var player_health: float = 100.0
+@export var throw_force: float = 5.0
 
 @export_category("Abilities")
 @export var player_shield: PackedScene
 @export var projectile: PackedScene
+@export var quicksand_grenade: PackedScene
 
 # Get the gravity from the project settings to be synced with RigidBody nodes.
 var gravity: float = ProjectSettings.get_setting("physics/3d/default_gravity")
@@ -18,6 +20,7 @@ var jumping: bool = false
 var can_move: bool = true
 var was_on_floor: bool = true
 var can_jump: bool = true
+var can_throw_grenade: bool = true
 
 @onready var spring_arm_pivot: Node3D = $Rig/SpringArmPivot
 @onready var spring_arm_3d: SpringArm3D = $Rig/SpringArmPivot/SpringArm3D
@@ -31,6 +34,7 @@ var can_jump: bool = true
 @onready var dash_timer: Timer = %DashTimer
 @onready var projectile_timer: Timer = %ProjectileTimer
 @onready var shield_timer: Timer = %ShieldTimer
+@onready var grenade_timer: Timer = %GrenadeTimer
 
 # Cooldown variables
 const MAX_SHIELD_CHARGES: int = 2
@@ -41,7 +45,7 @@ var projectile_ammo: int = MAX_PROJECTILES_AMMO
 
 
 func _ready() -> void:
-	Input.mouse_mode = Input.MOUSE_MODE_CAPTURED 
+	Input.mouse_mode = Input.MOUSE_MODE_CAPTURED
 
 
 func _manage_camera(event: InputEvent) -> void:
@@ -73,6 +77,9 @@ func _physics_process(delta: float) -> void:
 	# Can't block on air
 	if Input.is_action_just_pressed("block") and is_on_floor() and is_multiplayer_authority():
 		block()
+		
+	if Input.is_action_just_pressed("quicksand") and is_multiplayer_authority():
+		throw_grenade.rpc()
 
 	if is_multiplayer_authority():
 		send_data.rpc(global_position, velocity, rig.rotation)
@@ -221,3 +228,25 @@ func die() -> void:
 	set_physics_process(false)
 	set_process_input(false)
 
+
+@rpc("call_local")
+func throw_grenade() -> void:
+	if not can_throw_grenade:
+		return
+
+	var up_direction: float = 5.0
+	animation_tree.get("parameters/playback").travel("Throw")
+	var grenade_instance = quicksand_grenade.instantiate() as RigidBody3D
+	grenade_instance.position = projectile_spawner.global_position
+	add_sibling(grenade_instance)
+	var player_rotation = rig.global_transform.basis.z.normalized()
+	
+	grenade_instance.apply_central_impulse(
+		player_rotation * -throw_force + Vector3(0, up_direction, 0)
+	)
+	grenade_timer.start()
+	can_throw_grenade = false
+
+
+func _on_grenade_timer_timeout() -> void:
+	can_throw_grenade = true
