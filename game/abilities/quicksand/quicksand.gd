@@ -1,6 +1,6 @@
 extends Node3D
 
-const SLOWNESS: float = 3.0
+const SLOWNESS: float = 0.25
 const DEFAULT_SPEED: float = 5.0
 
 
@@ -20,7 +20,7 @@ func disappear() -> void:
 
 func _on_area_3d_body_entered(body: Node3D) -> void:
 	var player = body as Player
-	player.speed /= SLOWNESS
+	player.speed *= SLOWNESS
 	player.can_jump = false
 
 
