@@ -7,7 +7,7 @@ class_name Player
 @export var acceleration: float = 4.0
 @export var sensitivity: float = 0.3
 @export var player_health: float = 100.0
-@export var throw_force: float = 5.0
+@export var grenade_throw_force: float = 15.0
 
 @export_category("Abilities")
 @export var player_shield: PackedScene
@@ -237,10 +237,10 @@ func throw_grenade() -> void:
 	var grenade_instance = quicksand_grenade.instantiate() as RigidBody3D
 	grenade_instance.position = projectile_spawner.global_position
 	add_sibling(grenade_instance)
-	var player_rotation = rig.global_transform.basis.z.normalized()
+	var grenade_direction = -camera_3d.get_global_transform().basis.z.normalized()
 	
 	grenade_instance.apply_central_impulse(
-		player_rotation * -throw_force + Vector3(0, up_direction, 0)
+		grenade_direction * grenade_throw_force
 	)
 	grenade_timer.start()
 	can_throw_grenade = false
