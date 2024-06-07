@@ -51,8 +51,8 @@ func _ready() -> void:
 func _manage_camera(event: InputEvent) -> void:
 	if is_multiplayer_authority() and event is InputEventMouseMotion:
 		rig.rotate_y(deg_to_rad(-event.relative.x * sensitivity))
-		spring_arm_3d.rotate_x(deg_to_rad(-event.relative.y * sensitivity))
-		spring_arm_3d.rotation.x = clamp(spring_arm_3d.rotation.x, -PI/4, PI/4)
+		spring_arm_pivot.rotate_x(deg_to_rad(-event.relative.y * sensitivity))
+		spring_arm_pivot.rotation.x = clamp(spring_arm_pivot.rotation.x, -PI/3, PI/3)
 
 
 func _input(event: InputEvent) -> void:
