@@ -1,4 +1,4 @@
-[gd_scene load_steps=8 format=3 uid="uid://b5hufqs7sbm01"]
+[gd_scene load_steps=9 format=3 uid="uid://b5hufqs7sbm01"]
 
 [ext_resource type="Script" path="res://game/main.gd" id="1_ysfbh"]
 [ext_resource type="PackedScene" uid="uid://c7n3cme17dp68" path="res://game/players/rogue_hooded/rogue_hooded.tscn" id="2_k2pmo"]
@@ -14,10 +14,19 @@ sky_material = SubResource("ProceduralSkyMaterial_38rlk")
 background_mode = 2
 sky = SubResource("Sky_n2v51")
 tonemap_mode = 2
+ssao_enabled = true
+ssil_enabled = true
+sdfgi_enabled = true
 glow_enabled = true
+fog_enabled = true
+fog_light_color = Color(0.887174, 0.688427, 0.516937, 1)
+fog_density = 0.0125
 
 [sub_resource type="PlaneMesh" id="PlaneMesh_33dbc"]
-size = Vector2(20, 20)
+size = Vector2(100, 100)
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_tixew"]
+albedo_color = Color(0.413082, 0.226662, 0.104283, 1)
 
 [sub_resource type="ConcavePolygonShape3D" id="ConcavePolygonShape3D_2exbv"]
 data = PackedVector3Array(10, 0, 10, -10, 0, 10, 10, 0, -10, -10, 0, 10, -10, 0, -10, 10, 0, -10)
@@ -30,15 +39,19 @@ player_scene = ExtResource("2_k2pmo")
 environment = SubResource("Environment_ydhri")
 
 [node name="DirectionalLight3D" type="DirectionalLight3D" parent="."]
-transform = Transform3D(-0.866023, -0.433016, 0.250001, 0, 0.499998, 0.866027, -0.500003, 0.749999, -0.43301, 0, 0, 0)
+transform = Transform3D(-0.866024, -0.433016, 0.250001, 0, 0.499998, 0.866026, -0.500003, 0.749999, -0.43301, 0, 0.728214, 0)
+light_color = Color(0.881466, 0.850182, 0.825791, 1)
+light_energy = 1.5
 shadow_enabled = true
 
 [node name="Ground" type="MeshInstance3D" parent="."]
 mesh = SubResource("PlaneMesh_33dbc")
+surface_material_override/0 = SubResource("StandardMaterial3D_tixew")
 
 [node name="StaticBody3D" type="StaticBody3D" parent="Ground"]
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="Ground/StaticBody3D"]
+transform = Transform3D(10, 0, 0, 0, 10, 0, 0, 0, 10, 0, 0, 0)
 shape = SubResource("ConcavePolygonShape3D_2exbv")
 
 [node name="Players" type="Node3D" parent="."]
