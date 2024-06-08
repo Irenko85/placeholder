@@ -1,0 +1,38 @@
+[gd_scene load_steps=7 format=3 uid="uid://c4roclw3rg4jl"]
+
+[ext_resource type="PackedScene" uid="uid://f3m3vb3eghmr" path="res://game/environment/mountain.glb" id="1_0tpmk"]
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_8k8se"]
+albedo_color = Color(0.262601, 0.149892, 0.0392626, 1)
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_8ae21"]
+albedo_color = Color(0.405071, 0.240712, 0.0822947, 1)
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_y5y4u"]
+size = Vector3(17.8771, 3.83105, 6.10397)
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_3g7s7"]
+size = Vector3(14.083, 11.2978, 18.67)
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_fggsw"]
+size = Vector3(9.66406, 11.2978, 21.2051)
+
+[node name="mountain" instance=ExtResource("1_0tpmk")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 46.1188, -2, -25.127)
+
+[node name="Mountain2" parent="." index="0"]
+transform = Transform3D(-5, 0, -1.94707e-06, 0, 5, 0, 1.94707e-06, 0, -5, -31.6667, 0, 19.5966)
+surface_material_override/0 = SubResource("StandardMaterial3D_8k8se")
+surface_material_override/1 = SubResource("StandardMaterial3D_8ae21")
+
+[node name="CollisionShape3D2" type="CollisionShape3D" parent="Mountain2/StaticBody3D" index="1"]
+transform = Transform3D(0.983741, 0, 0.179592, 0, 1, 0, -0.179592, 0, 0.983741, 1.90251, 4.80303, -4.95057)
+shape = SubResource("BoxShape3D_y5y4u")
+
+[node name="CollisionShape3D3" type="CollisionShape3D" parent="Mountain2/StaticBody3D" index="2"]
+transform = Transform3D(-0.211626, 0, -0.257537, 0, 0.333333, 0, 0.257537, 0, -0.211626, -9.90575, 4.42252, -0.132205)
+shape = SubResource("BoxShape3D_3g7s7")
+
+[node name="CollisionShape3D4" type="CollisionShape3D" parent="Mountain2/StaticBody3D" index="3"]
+transform = Transform3D(-0.33309, 0, 0.0127263, 0, 0.333333, 0, -0.0127263, 0, -0.33309, 11.011, 4.42252, -2.06293)
+shape = SubResource("BoxShape3D_fggsw")

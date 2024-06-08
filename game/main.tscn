@@ -1,7 +1,10 @@
-[gd_scene load_steps=9 format=3 uid="uid://b5hufqs7sbm01"]
+[gd_scene load_steps=12 format=3 uid="uid://b5hufqs7sbm01"]
 
 [ext_resource type="Script" path="res://game/main.gd" id="1_ysfbh"]
 [ext_resource type="PackedScene" uid="uid://c7n3cme17dp68" path="res://game/players/rogue_hooded/rogue_hooded.tscn" id="2_k2pmo"]
+[ext_resource type="PackedScene" uid="uid://c4roclw3rg4jl" path="res://game/environment/mountain.tscn" id="3_roqjf"]
+[ext_resource type="PackedScene" uid="uid://bjstbqc2nxcsy" path="res://game/environment/cactus.tscn" id="4_gmrp4"]
+[ext_resource type="PackedScene" uid="uid://3jqjc02am08w" path="res://game/environment/mountain_2.tscn" id="5_huey3"]
 
 [sub_resource type="ProceduralSkyMaterial" id="ProceduralSkyMaterial_38rlk"]
 sky_horizon_color = Color(0.64625, 0.65575, 0.67075, 1)
@@ -20,10 +23,9 @@ sdfgi_enabled = true
 glow_enabled = true
 fog_enabled = true
 fog_light_color = Color(0.887174, 0.688427, 0.516937, 1)
-fog_density = 0.0125
 
 [sub_resource type="PlaneMesh" id="PlaneMesh_33dbc"]
-size = Vector2(100, 100)
+size = Vector2(200, 200)
 
 [sub_resource type="StandardMaterial3D" id="StandardMaterial3D_tixew"]
 albedo_color = Color(0.413082, 0.226662, 0.104283, 1)
@@ -51,7 +53,7 @@ surface_material_override/0 = SubResource("StandardMaterial3D_tixew")
 [node name="StaticBody3D" type="StaticBody3D" parent="Ground"]
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="Ground/StaticBody3D"]
-transform = Transform3D(10, 0, 0, 0, 10, 0, 0, 0, 10, 0, 0, 0)
+transform = Transform3D(20, 0, 0, 0, 20, 0, 0, 0, 20, 0, 0, 0)
 shape = SubResource("ConcavePolygonShape3D_2exbv")
 
 [node name="Players" type="Node3D" parent="."]
@@ -63,3 +65,32 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1, 3)
 
 [node name="PlayerB" type="Marker3D" parent="Spawn"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1, -3)
+
+[node name="World" type="Node3D" parent="."]
+
+[node name="mountain" parent="World" instance=ExtResource("3_roqjf")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 33.4479, -1, -7.73618)
+
+[node name="cactus" parent="World" instance=ExtResource("4_gmrp4")]
+transform = Transform3D(0.73802, 0, 0.674779, 0, 1, 0, -0.674779, 0, 0.73802, -1.81899, 0, -1.23455)
+
+[node name="cactus2" parent="World" instance=ExtResource("4_gmrp4")]
+transform = Transform3D(-0.99906, 0, -0.0433578, 0, 1, 0, 0.0433578, 0, -0.99906, 1.75193, 0, 7.97906)
+
+[node name="cactus3" parent="World" instance=ExtResource("4_gmrp4")]
+transform = Transform3D(-0.99906, 0, -0.0433578, 0, 1, 0, 0.0433578, 0, -0.99906, -17.2074, 0, -10.1895)
+
+[node name="cactus4" parent="World" instance=ExtResource("4_gmrp4")]
+transform = Transform3D(-0.745976, 0, 0.665973, 0, 1, 0, -0.665973, 0, -0.745976, 7.68476, 0, -14.0986)
+
+[node name="cactus5" parent="World" instance=ExtResource("4_gmrp4")]
+transform = Transform3D(-0.99745, 0, 0.0713756, 0, 1, 0, -0.0713756, 0, -0.99745, -3.65407, 0, -14.0986)
+
+[node name="cactus6" parent="World" instance=ExtResource("4_gmrp4")]
+transform = Transform3D(-0.552621, 0, -0.833433, 0, 1, 0, 0.833433, 0, -0.552621, 16.2141, 0, -5.34345)
+
+[node name="cactus7" parent="World" instance=ExtResource("4_gmrp4")]
+transform = Transform3D(-0.552621, 0, -0.833433, 0, 1, 0, 0.833433, 0, -0.552621, -13.1663, 0, 2.53806)
+
+[node name="mountain2" parent="World" instance=ExtResource("5_huey3")]
+transform = Transform3D(-0.106334, 0, -0.99433, 0, 1, 0, 0.99433, 0, -0.106334, -51.9155, 0, -34.6029)
