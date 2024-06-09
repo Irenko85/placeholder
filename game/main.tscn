@@ -14,7 +14,6 @@ sky_material = SubResource("ProceduralSkyMaterial_38rlk")
 background_mode = 2
 sky = SubResource("Sky_n2v51")
 tonemap_mode = 2
-ssao_enabled = true
 ssil_enabled = true
 sdfgi_enabled = true
 glow_enabled = true
