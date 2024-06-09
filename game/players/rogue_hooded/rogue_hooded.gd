@@ -21,6 +21,7 @@ var can_move: bool = true
 var was_on_floor: bool = true
 var can_jump: bool = true
 var can_throw_grenade: bool = true
+var is_dancing: bool = false
 
 @onready var spring_arm_pivot: Node3D = $Rig/SpringArmPivot
 @onready var spring_arm_3d: SpringArm3D = $Rig/SpringArmPivot/SpringArm3D
@@ -80,6 +81,9 @@ func _physics_process(delta: float) -> void:
 		
 	if Input.is_action_just_pressed("quicksand") and is_multiplayer_authority():
 		throw_grenade.rpc()
+		
+	if Input.is_action_just_pressed("dance") and is_multiplayer_authority() and is_on_floor():
+		dance.rpc()
 
 	if is_multiplayer_authority():
 		send_data.rpc(global_position, velocity, rig.rotation)
@@ -165,6 +169,8 @@ func movement(delta) -> void:
 			jump()
 		if Input.is_action_just_pressed("dash"):
 			dash(direction)
+		if direction != Vector3.ZERO or not is_on_floor():
+			stop_dance.rpc()
 
 
 func jump() -> void:
@@ -248,3 +254,16 @@ func throw_grenade() -> void:
 
 func _on_grenade_timer_timeout() -> void:
 	can_throw_grenade = true
+
+
+@rpc("call_local")
+func dance() -> void:
+	is_dancing = true
+	animation_tree.get("parameters/playback").travel("Cheer")
+
+
+@rpc("call_local")
+func stop_dance() -> void:
+	if is_dancing:
+		is_dancing = false
+		animation_tree.get("parameters/playback").travel("Movement")
