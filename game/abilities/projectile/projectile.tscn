@@ -1,8 +1,9 @@
-[gd_scene load_steps=6 format=3 uid="uid://em1sf73nscno"]
+[gd_scene load_steps=7 format=3 uid="uid://em1sf73nscno"]
 
 [ext_resource type="Script" path="res://game/abilities/projectile/projectile.gd" id="1_8ejkr"]
 [ext_resource type="PackedScene" uid="uid://cfkq0ec5hduvp" path="res://game/abilities/projectile/projectile.glb" id="1_omrpw"]
 [ext_resource type="Texture2D" uid="uid://bpcenqcv7juct" path="res://game/abilities/projectile/projectile_color_atlas.png" id="2_74thi"]
+[ext_resource type="PackedScene" uid="uid://bsuustsm04e25" path="res://game/abilities/projectile/projectile_particles.tscn" id="2_rels8"]
 
 [sub_resource type="StandardMaterial3D" id="StandardMaterial3D_sbqha"]
 resource_name = "color_atlas"
@@ -16,6 +17,7 @@ radius = 0.375646
 
 [node name="Projectile" type="Node3D"]
 script = ExtResource("1_8ejkr")
+projectile_particles = ExtResource("2_rels8")
 
 [node name="projectile" parent="." instance=ExtResource("1_omrpw")]
 
