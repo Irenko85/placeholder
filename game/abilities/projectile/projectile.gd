@@ -15,6 +15,7 @@ func _process(delta) -> void:
 
 
 func _on_timer_timeout() -> void:
+	add_particles()
 	queue_free()
 
 
@@ -27,6 +28,6 @@ func _on_area_3d_body_entered(body: Node3D) -> void:
 
 func add_particles() -> void:
 	var particles_instance = projectile_particles.instantiate() as GPUParticles3D
+	add_sibling(particles_instance)
 	particles_instance.global_position = global_position
 	particles_instance.emitting = true
-	add_sibling(particles_instance)
