@@ -87,7 +87,7 @@ func _physics_process(delta: float) -> void:
 		dance.rpc()
 
 	if is_multiplayer_authority():
-		send_data.rpc(global_position, velocity, rig.rotation)
+		send_data.rpc(global_position, velocity, rig.quaternion)
 	move_and_slide()
 
 
@@ -211,11 +211,11 @@ func setup(player_data: Statics.PlayerData) -> void:
 	camera_3d.current = is_multiplayer_authority()
 
 
-@rpc
-func send_data(pos: Vector3, vel: Vector3, rotation):
+@rpc("unreliable_ordered")
+func send_data(pos: Vector3, vel: Vector3, quaternion):
 	global_position = lerp(global_position, pos, 0.75)
 	velocity = lerp(velocity, vel, 0.75)
-	rig.rotation = lerp(rig.rotation, rotation, 0.75)
+	rig.quaternion = rig.quaternion.slerp(quaternion, 0.75)
 
 
 func take_damage(amount: float) -> void:
