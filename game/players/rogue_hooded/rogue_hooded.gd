@@ -80,7 +80,8 @@ func _physics_process(delta: float) -> void:
 		block()
 		
 	if Input.is_action_just_pressed("quicksand") and is_multiplayer_authority():
-		throw_grenade.rpc()
+		var grenade_direction = -camera_3d.get_global_transform().basis.z.normalized()
+		throw_grenade.rpc(grenade_direction)
 		
 	if Input.is_action_just_pressed("dance") and is_multiplayer_authority() and is_on_floor():
 		dance.rpc()
@@ -234,7 +235,7 @@ func die() -> void:
 
 
 @rpc("call_local")
-func throw_grenade() -> void:
+func throw_grenade(grenade_direction) -> void:
 	if not can_throw_grenade:
 		return
 
@@ -243,7 +244,6 @@ func throw_grenade() -> void:
 	var grenade_instance = quicksand_grenade.instantiate() as RigidBody3D
 	grenade_instance.position = projectile_spawner.global_position
 	add_sibling(grenade_instance)
-	var grenade_direction = -camera_3d.get_global_transform().basis.z.normalized()
 	
 	grenade_instance.apply_central_impulse(
 		grenade_direction * grenade_throw_force
