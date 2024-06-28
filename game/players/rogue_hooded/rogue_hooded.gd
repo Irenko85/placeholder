@@ -22,6 +22,7 @@ var was_on_floor: bool = true
 var can_jump: bool = true
 var can_throw_grenade: bool = true
 var is_dancing: bool = false
+var dashing: bool = false
 
 @onready var spring_arm_pivot: Node3D = $Rig/SpringArmPivot
 @onready var spring_arm_3d: SpringArm3D = $Rig/SpringArmPivot/SpringArm3D
@@ -36,6 +37,7 @@ var is_dancing: bool = false
 @onready var projectile_timer: Timer = %ProjectileTimer
 @onready var shield_timer: Timer = %ShieldTimer
 @onready var grenade_timer: Timer = %GrenadeTimer
+@onready var dash_duration: Timer = %DashDuration
 
 # Cooldown variables
 const MAX_SHIELD_CHARGES: int = 2
@@ -182,8 +184,11 @@ func jump() -> void:
 func dash(direction) -> void:
 	if dash_timer.time_left > 0:
 		return
+	dashing = true
 	velocity = direction * speed * 5
 	dash_timer.start()
+	dash_duration.start()
+
 
 
 func handle_animations() -> void:
@@ -191,6 +196,7 @@ func handle_animations() -> void:
 		animation_tree.set("parameters/conditions/jumping", true)
 		animation_tree.set("parameters/conditions/grounded", false)
 	if is_on_floor() and not was_on_floor:
+		Debug.sprint("FJLDS")
 		jumping = false
 		animation_tree.set("parameters/conditions/jumping", false)
 		animation_tree.set("parameters/conditions/grounded", true)
@@ -200,8 +206,13 @@ func handle_animations() -> void:
 		animation_tree.set("parameters/conditions/grounded", false)
 
 	var vl = velocity * rig.transform.basis
-	animation_tree.set("parameters/Movement/blend_position", Vector2(vl.x, -vl.z) / speed)
-
+	
+	if dashing:
+		animation_tree.set("parameters/Dash/blend_position", Vector2(vl.x, -vl.z).normalized())
+		animation_tree.get("parameters/playback").travel("Dash")
+	elif not jumping:
+		animation_tree.get("parameters/playback").travel("Movement")
+		animation_tree.set("parameters/Movement/blend_position", Vector2(vl.x, -vl.z) / speed)
 	was_on_floor = is_on_floor()
 
 
@@ -267,3 +278,7 @@ func stop_dance() -> void:
 	if is_dancing:
 		is_dancing = false
 		animation_tree.get("parameters/playback").travel("Movement")
+
+
+func _on_dash_duration_timeout() -> void:
+	dashing = false
